@@ -1,0 +1,15 @@
+label#first-question {
+	display: block;
+}
+
+input#first-question {
+	width:         100%;
+	margin-top:    2px;
+	margin-bottom: 10px;
+}
+
+input.answer-option {
+	margin-top:    5px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+}
