@@ -1,0 +1,3 @@
+
+
+Allows author to create questions about their post that must be answered correctly in order for someone to be able to leave a comment. This is to make sure that the person commenting has actually read the article and at least understands the most important points before being allowed to comment. This will limit the number of trolls commenting since it is one extra step (having to actually read the article) and also ensures that someone isn't just reacting to the title instead of the actual post.
