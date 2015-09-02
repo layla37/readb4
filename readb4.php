@@ -5,7 +5,7 @@ Plugin URI:  https://github.com/layla37/readb4
 Description: Allows author to write questions about their post that must be answered correctly before someone can comment.
 Version:     1.0.0
 Author:      Layla Mandella
-Author URI:  https://github.com/layla37/readb4
+Author URI:  https://github.com/layla37
 License:     GPLv2
 */
 
@@ -88,4 +88,40 @@ function rb4_display_meta_box( $post ) {
 	echo $html;
 	
 }
+
+add_filter( 'comment_form_field_comment', 'rb4_show_questions' );
+
+function rb4_show_questions( $comment_form ) {
+	// check cookie to see if they already answered question previously
+
+	// if answered, return
+
+	// if not yet answered or answered incorrectly
+	rb4_did_not_answer();
+	$comment_form = rb4_not_answered( $comment_form );
+
+	return $comment_form;
+}
+
+
+function rb4_not_answered($comment_form) {
+	$comment_form = 'Q&A here!!!' . $comment_form;
+
+	return $comment_form;
+}
+
+
+function rb4_did_not_answer() {
+	add_filter('wp_footer', 'rb4_footer');
+}
+
+
+function rb4_footer() {
+
+	?><script>
+		document.getElementsByClassName('comment-form-comment')[0].style.display = 'none';
+		document.getElementsByClassName('form-submit')[0].style.display = 'none';
+	</script><?php
+}
+
 

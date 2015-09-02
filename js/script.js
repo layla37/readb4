@@ -1,8 +1,10 @@
 (function($) {
 	"use strict";
 	
-	$(function() {		
-		document.getElementById('commentform').style.display = 'none';
+	$(function() {
+		// $('.comment-reply-link').css('display','none');
+		// document.getElementById('commentform').style.display = 'none';
+		console.log('YIPPEEE');
 	});
 	
 }(jQuery));
