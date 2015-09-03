@@ -56,9 +56,9 @@ function rb4_add_meta_box() {
 }
 
 /**
- * Displays an optional error message and a view for the QA meta box.
+ * view for the QA meta box.
  *
- * @param    object    $post    The post object to which this meta box is being displayed.
+ * @param    object    $post    The post object to which this meta box is being displayed
  * @since    1.0.0
  */
 function rb4_meta_box( $post ) {
@@ -67,6 +67,8 @@ function rb4_meta_box( $post ) {
 	$q1_a1 = get_post_meta( $post->ID, '_first-q-option-1', true );
 	$q1_a2 = get_post_meta( $post->ID, '_first-q-option-2', true );
 	$q1_a3 = get_post_meta( $post->ID, '_first-q-option-3', true );
+
+	error_log($q1_a1);
 
 	// nonce for security purposes
 	wp_nonce_field( plugin_basename( __FILE__ ), 'rb4_save_meta_box' );
@@ -132,8 +134,19 @@ function rb4_show_questions( $comment_form ) {
 }
 
 
-function rb4_not_answered($comment_form) {
-	$comment_form = 'Q&A here!!!' . $comment_form;
+function rb4_not_answered( $comment_form ) {
+	global $post;
+	$first_question = get_post_meta( $post->ID, '_first-question', true );
+	$q1_a1 = get_post_meta( $post->ID, '_first-q-option-1', true );
+	$q1_a2 = get_post_meta( $post->ID, '_first-q-option-2', true );
+	$q1_a3 = get_post_meta( $post->ID, '_first-q-option-3', true );
+
+	$comment_form = '<form>
+		<input type="radio" name="first-q-option-1" value="' . esc_html( $q1_a1 ) . '"> ' . esc_html( $q1_a1 ) . '<br>
+		<input type="radio" name="first-q-option-2" value="' . esc_html( $q1_a2 ) . '"> ' . esc_html( $q1_a2 ) . '<br>
+		<input type="radio" name="first-q-option-3" value="' . esc_html( $q1_a3 ) . '"> ' . esc_html( $q1_a3 ) . '</form>' 
+
+		. $comment_form;
 
 	return $comment_form;
 }
@@ -151,5 +164,3 @@ function rb4_footer() {
 		document.getElementsByClassName('form-submit')[0].style.display = 'none';
 	</script> <?php
 }
-
-
