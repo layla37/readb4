@@ -139,10 +139,11 @@ function rb4_not_answered( $comment_form ) {
 	$q1_a2 = get_post_meta( $post->ID, '_first-q-option-2', true );
 	$q1_a3 = get_post_meta( $post->ID, '_first-q-option-3', true );
 
-	$comment_form = '<form>
-		<input type="radio" name="first-q-option-1" value="' . esc_html( $q1_a1 ) . '"> ' . esc_html( $q1_a1 ) . '<br>
-		<input type="radio" name="first-q-option-2" value="' . esc_html( $q1_a2 ) . '"> ' . esc_html( $q1_a2 ) . '<br>
-		<input type="radio" name="first-q-option-3" value="' . esc_html( $q1_a3 ) . '"> ' . esc_html( $q1_a3 ) . '</form>' 
+	$comment_form = '<p>You must answer the following question correctly in order to leave a comment:</p><p><strong>' . 
+		esc_html( $first_question ) . '</strong></p><form>
+		<input type="radio" name="first-q-answer" value="' . esc_html( $q1_a1 ) . '"> ' . esc_html( $q1_a1 ) . '<br>
+		<input type="radio" name="first-q-answer" value="' . esc_html( $q1_a2 ) . '"> ' . esc_html( $q1_a2 ) . '<br>
+		<input type="radio" name="first-q-answer" value="' . esc_html( $q1_a3 ) . '"> ' . esc_html( $q1_a3 ) . '</form>' 
 
 		. $comment_form;
 
@@ -151,7 +152,7 @@ function rb4_not_answered( $comment_form ) {
 
 
 function rb4_did_not_answer() {
-	add_filter('wp_footer', 'rb4_footer');
+	add_filter( 'wp_footer', 'rb4_footer' );
 }
 
 
@@ -162,3 +163,5 @@ function rb4_footer() {
 		document.getElementsByClassName('form-submit')[0].style.display = 'none';
 	</script> <?php
 }
+
+
