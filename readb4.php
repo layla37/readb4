@@ -68,8 +68,6 @@ function rb4_meta_box( $post ) {
 	$q1_a2 = get_post_meta( $post->ID, '_first-q-option-2', true );
 	$q1_a3 = get_post_meta( $post->ID, '_first-q-option-3', true );
 
-	error_log($q1_a1);
-
 	// nonce for security purposes
 	wp_nonce_field( plugin_basename( __FILE__ ), 'rb4_save_meta_box' );
 	
