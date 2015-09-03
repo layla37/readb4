@@ -39,19 +39,21 @@ add_action( 'wp_enqueue_scripts', 'rb4_add_scripts' );
  *
  * @since    1.0.0
  */
+
+add_action( 'add_meta_boxes', 'rb4_add_meta_box' );
+
 function rb4_add_meta_box() {
 	
 	add_meta_box(
 		'rb4_qa_box',            // The ID for the meta box
 		'Questions About Post',   // The title of the meta box
-		'rb4_display_meta_box',  // The function for rendering the markup
+		'rb4_meta_box',  // The function for rendering the markup
 		'post',                   // We'll only be displaying this on post pages
 		'side',                   // Where the meta box should appear
-		'core'                    // The priority of where the meta box should be displayed
+		'default'                    // The priority of where the meta box should be displayed
 	);
 	
 }
-add_action( 'add_meta_boxes', 'rb4_add_meta_box' );
 
 /**
  * Displays an optional error message and a view for the QA meta box.
@@ -59,34 +61,60 @@ add_action( 'add_meta_boxes', 'rb4_add_meta_box' );
  * @param    object    $post    The post object to which this meta box is being displayed.
  * @since    1.0.0
  */
-function rb4_display_meta_box( $post ) {
+function rb4_meta_box( $post ) {
+	// retrieve the custom meta box values
+	$first_question = get_post_meta( $post->ID, '_first-question', true );
+	$q1_a1 = get_post_meta( $post->ID, '_first-q-option-1', true );
+	$q1_a2 = get_post_meta( $post->ID, '_first-q-option-2', true );
+	$q1_a3 = get_post_meta( $post->ID, '_first-q-option-3', true );
+
+	// nonce for security purposes
+	wp_nonce_field( plugin_basename( __FILE__ ), 'rb4_save_meta_box' );
 	
-	// Define the nonce for security purposes
-	wp_nonce_field( plugin_basename( __FILE__ ), 'rb4-nonce-field' );
-	
-	// Start the HTML string so that all other strings can be concatenated
 	$html = '';
 	
-	// Display the 'First Question' label and its text input element
+	// Display the question and answers options in the meta box
 	$html .= '<label id="first-question" for="first-question">';
-	$html .= '1st Question';
+	$html .= 'Question about the Post';
 	$html .= '</label>';
-	$html .= '<input type="text" id="first-question" name="first-question" value="' . get_post_meta( $post->ID, 'first-question', true ) . '" placeholder="What is the dog\'s name?" />';
+	$html .= '<input type="text" id="first-question" name="first-question" value="' . esc_html( $first_question ) . '" placeholder="What is the dog\'s name?" />';
 	$html .= '<label id="first-q-option-1" for="first-q-option-1">';
 	$html .= 'Answer A ';
 	$html .= '</label>';
-	$html .= '<input type="text" id="first-q-option-1" class="answer-option" name="first-q-option-1" value="' . get_post_meta( $post->ID, 'first-q-option-1', true ) . '" placeholder="Spot" />';
+	$html .= '<input type="text" id="first-q-option-1" class="answer-option" name="first-q-option-1" value="' . esc_html( $q1_a1 ) . '" placeholder="Spot" />';
 	$html .= '<label id="first-q-option-2" for="first-q-option-2">';
 	$html .= 'Answer B ';
 	$html .= '</label>';
-	$html .= '<input type="text" id="first-q-option-2" class="answer-option" name="first-q-option-2" value="' . get_post_meta( $post->ID, 'first-q-option-2', true ) . '" placeholder="Rover" />';
+	$html .= '<input type="text" id="first-q-option-2" class="answer-option" name="first-q-option-2" value="' . esc_html( $q1_a2 ) . '" placeholder="Rover" />';
 	$html .= '<label id="first-q-option-3" for="first-q-option-3">';
 	$html .= 'Answer C ';
 	$html .= '</label>';
-	$html .= '<input type="text" id="first-q-option-3" class="answer-option" name="first-q-option-3" value="' . get_post_meta( $post->ID, 'first-q-option-3', true ) . '" placeholder="Tiger" />';
+	$html .= '<input type="text" id="first-q-option-3" class="answer-option" name="first-q-option-3" value="' . esc_html( $q1_a3 ) . '" placeholder="Tiger" />';
 
 	echo $html;
 	
+}
+
+add_action( 'save_post', 'rb4_save_meta_box' );
+
+function rb4_save_meta_box( $post_id ) {
+	if ( isset( $_POST[ 'first-question' ] ) &&
+		isset( $_POST[ 'first-q-option-1' ] ) && 
+		isset( $_POST[ 'first-q-option-2' ] ) && 
+		isset( $_POST[ 'first-q-option-3' ] ) ) {
+
+		if ( defined( 'DOING_AUTOSAVE' )  && DOING_AUTOSAVE ) return;
+
+		// check nonce for security
+		check_admin_referer( plugin_basename( __FILE__ ), 'rb4_save_meta_box' );
+
+		// save meta box data as post meta
+		update_post_meta( $post_id, '_first-question', sanitize_text_field( $_POST[ 'first-question' ] ) );
+		update_post_meta( $post_id, '_first-q-option-1', sanitize_text_field( $_POST[ 'first-q-option-1' ] ) );
+		update_post_meta( $post_id, '_first-q-option-2', sanitize_text_field( $_POST[ 'first-q-option-2' ] ) );
+		update_post_meta( $post_id, '_first-q-option-3', sanitize_text_field( $_POST[ 'first-q-option-3' ] ) );
+	}
+
 }
 
 add_filter( 'comment_form_field_comment', 'rb4_show_questions' );
@@ -118,10 +146,10 @@ function rb4_did_not_answer() {
 
 function rb4_footer() {
 
-	?><script>
+	?> <script>
 		document.getElementsByClassName('comment-form-comment')[0].style.display = 'none';
 		document.getElementsByClassName('form-submit')[0].style.display = 'none';
-	</script><?php
+	</script> <?php
 }
 
 
